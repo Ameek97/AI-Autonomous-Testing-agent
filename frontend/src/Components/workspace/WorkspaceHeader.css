@@ -1,0 +1,191 @@
+.workspace-header {
+  --wh-text: #8b93a7;
+  --wh-text-h: #e8eaef;
+  --wh-bg: #0f1117;
+  --wh-surface: #171a22;
+  --wh-border: #2a2f3a;
+  --wh-accent: #6ea8ff;
+  --wh-accent-bg: rgba(110, 168, 255, 0.12);
+  --wh-accent-border: rgba(110, 168, 255, 0.35);
+  --wh-success: #3dd68c;
+  --wh-sans: system-ui, "Segoe UI", Roboto, sans-serif;
+  --wh-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  min-height: 56px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--wh-border);
+  background: var(--wh-bg);
+  color: var(--wh-text);
+  font-family: var(--wh-sans);
+  text-align: left;
+}
+
+.workspace-header *,
+.workspace-header *::before,
+.workspace-header *::after {
+  box-sizing: border-box;
+}
+
+.workspace-header__left,
+.workspace-header__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.workspace-header__right {
+  justify-content: flex-end;
+}
+
+.workspace-header__center {
+  display: flex;
+  justify-content: center;
+}
+
+.workspace-header__mark {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--wh-accent-bg);
+  border: 1px solid var(--wh-accent-border);
+  color: var(--wh-accent);
+  font-family: var(--wh-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.workspace-header__identity {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.workspace-header__product {
+  color: var(--wh-text-h);
+  font-weight: 600;
+}
+
+.workspace-header__divider {
+  color: var(--wh-border);
+}
+
+.workspace-header__project {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--wh-text);
+}
+
+.workspace-header__title {
+  margin: 0;
+  font-family: var(--wh-sans);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.2;
+  color: var(--wh-text-h);
+}
+
+.workspace-header__github,
+.workspace-header__profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 10px;
+  border: 1px solid var(--wh-border);
+  border-radius: 999px;
+  background: var(--wh-surface);
+}
+
+.workspace-header__status-dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #6b7280;
+}
+
+.workspace-header__github.is-connected .workspace-header__status-dot {
+  background: var(--wh-success);
+}
+
+.workspace-header__github-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.workspace-header__github-label,
+.workspace-header__user-name {
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--wh-text-h);
+}
+
+.workspace-header__github-account {
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--wh-text);
+}
+
+.workspace-header__avatar {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--wh-accent-bg);
+  color: var(--wh-accent);
+  font-family: var(--wh-mono);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.workspace-header__user-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .workspace-header {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "left right"
+      "title title";
+  }
+
+  .workspace-header__left {
+    grid-area: left;
+  }
+
+  .workspace-header__center {
+    grid-area: title;
+    justify-content: flex-start;
+  }
+
+  .workspace-header__right {
+    grid-area: right;
+  }
+
+  .workspace-header__user-name,
+  .workspace-header__github-account {
+    display: none;
+  }
+}
