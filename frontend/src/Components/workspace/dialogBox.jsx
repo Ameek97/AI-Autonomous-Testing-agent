@@ -9,10 +9,30 @@ import {
   DialogClose,
   DialogFooter,
 } from "@/components/ui/dialog"
+import { useState } from "react"
+import axios from "axios"
+import { useEffect } from "react"
 
-
+const getRepos = async()=>{
+    
+    try{
+        
+        const result  = await axios.get("http://localhost:5001/api/github/repos", {})
+        console.log(result)
+    } catch(err){
+        console.log(err)
+    }
+}
 
 function DialogBox({ isOpen, onClose, children }) {
+    
+    const {repos, setrepos} = useState([])
+    useEffect(() => {
+        
+        getRepos();  
+        console.log( repos )
+    
+    }, [])
 
     return (
       <>

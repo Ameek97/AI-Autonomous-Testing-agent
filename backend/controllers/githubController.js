@@ -1,5 +1,6 @@
 const axios = require("axios");
 const crypto = require("crypto");
+const getGithubRepositories = require("./getGithubRepositories");
 
 const startGithubOAuth = (req, res) => {
   const stateValue = crypto.randomBytes(32).toString("hex");
@@ -55,4 +56,5 @@ const githubCallback = async (req, res) => {
 module.exports = {
   startGithubOAuth,
   githubCallback,
+  getGithubRepositories
 };
