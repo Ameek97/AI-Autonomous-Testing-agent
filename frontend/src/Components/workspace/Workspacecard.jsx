@@ -1,22 +1,34 @@
 import axios from "axios";
+import "./Workspacecard.css";
 
 const handleAddClick = async () => {
+  window.location.href = "http://localhost:5001/api/github";
+};
 
-window.location.href = "http://localhost:5000/api/github";
-
-}
-
-function Workspacecard() {
-
+function Workspacecard( { githubConnected } ) {
   return (
+    <div className="workspace-card">
+      <p className="workspace-card__label">Add to GitHub</p>
 
-   <>
-    <p> Connect github and repo</p>
-    <button onClick={handleAddClick}> +add </button>
-    
+      {githubConnected ? (
+        <p className="workspace-card__status">Connected to GitHub</p>
+      ) : (
+        <p className="workspace-card__status">Not connected to GitHub</p>
+      )}
    
-   </>)
+    { !githubConnected ? (
+       
+      <button className="workspace-card__button" type="button" onClick={handleAddClick}>
+        + Add
+      </button>) : (
+      <button className="workspace-card__button" type="button" onClick={handleSetRepoClick}>
+        + Set Repo  
+      </button>
+    )}
 
+
+    </div>
+  );
 }
 
 export default Workspacecard;

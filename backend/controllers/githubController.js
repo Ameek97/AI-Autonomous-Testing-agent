@@ -1,14 +1,12 @@
 const axios = require("axios");
 const crypto = require("crypto");
 
-const { saveAccessToken } = require("../models/githubModel");
-
 const startGithubOAuth = (req, res) => {
   const stateValue = crypto.randomBytes(32).toString("hex");
 
   const params = new URLSearchParams({
     client_id: process.env.GITHUB_CLIENT_ID,
-    redirect_uri: "http://localhost:5000/api/github/callback",
+    redirect_uri: "http://localhost:5001/api/github/callback",
     scope: "repo read:user",
     state: stateValue,
   });
@@ -18,6 +16,7 @@ const startGithubOAuth = (req, res) => {
   );
 };
 
+// get access from github using the code recieved
 const githubCallback = async (req, res) => {
   try {
     const code = req.query.code;
@@ -32,22 +31,19 @@ const githubCallback = async (req, res) => {
       },
       {
         headers: {
-          Accept: "application/json",
-        },
+          Accept: "application/json"},
       }
     );
 
     const accessToken = result.data.access_token;
 
-    // Temporary for now
-    const userId = "temporary-user-id";
+    console.log("GitHub access token:", accessToken);
 
-    await saveAccessToken(userId, accessToken);
-
-    res.redirect("http://localhost:5173/workspace");  } 
-  
-  
-  catch (error) {
+      res.cookie("github_access_token", accessToken, {
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      }).redirect("http://localhost:5173/workspace");
+  } catch (error) {
     console.error(error);
 
     res.status(500).json({
