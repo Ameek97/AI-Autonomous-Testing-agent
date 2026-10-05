@@ -1,5 +1,6 @@
 import axios from "axios";
 import "./Workspacecard.css";
+import DialogBox from "./dialogBox.jsx";
 
 const handleAddClick = async () => {
   window.location.href = "http://localhost:5001/api/github";
@@ -21,10 +22,10 @@ function Workspacecard( { githubConnected } ) {
       <button className="workspace-card__button" type="button" onClick={handleAddClick}>
         + Add
       </button>) : (
-      <button className="workspace-card__button" type="button" onClick={handleSetRepoClick}>
-        + Set Repo  
-      </button>
+      <DialogBox />
     )}
+
+    
 
 
     </div>
