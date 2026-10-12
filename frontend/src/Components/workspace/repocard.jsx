@@ -73,7 +73,7 @@ function Repocard(){
     updated_at: "2026-10-08T18:10:00Z",
     language: "C++",
     default_branch: "main",
-  },] );
+  },   ] );
 
   useEffect( ()=>{
    getRepos(setRepo);     

@@ -4,92 +4,20 @@ const pool = require("../db/connections");
 // The request body is not a source for the user id.
 const getAuthenticatedUserId = () => null;
 
-const isNonEmptyString = (value) =>
-  typeof value === "string" && value.trim() !== "";
 
-const parseRepository = (body) => {
-  if (!body || typeof body !== "object" || Array.isArray(body)) {
-    return { error: { message: "Invalid repository", fields: ["body"] } };
-  }
 
-  const fields = [];
 
-  let githubId = body.id;
-  if (typeof githubId === "string" && /^[0-9]+$/.test(githubId)) {
-    githubId = Number(githubId);
-  }
-  if (!Number.isSafeInteger(githubId) || githubId <= 0) {
-    fields.push("id");
-  }
-
-  const name = isNonEmptyString(body.name) ? body.name.trim() : "";
-  if (!name) fields.push("name");
-
-  const fullName = isNonEmptyString(body.full_name) ? body.full_name.trim() : "";
-  if (!fullName) fields.push("full_name");
-
-  if (typeof body.private !== "boolean") fields.push("private");
-
-  const htmlUrl = isNonEmptyString(body.html_url) ? body.html_url.trim() : "";
-  if (!htmlUrl) fields.push("html_url");
-
-  let description = null;
-  if (body.description != null) {
-    if (typeof body.description !== "string") fields.push("description");
-    else description = body.description;
-  }
-
-  let language = null;
-  if (body.language != null) {
-    if (typeof body.language !== "string") fields.push("language");
-    else language = body.language;
-  }
-
-  let updatedAt = null;
-  if (body.updated_at == null || body.updated_at === "") {
-    fields.push("updated_at");
-  } else {
-    const parsed = new Date(body.updated_at);
-    if (Number.isNaN(parsed.getTime())) fields.push("updated_at");
-    else updatedAt = parsed.toISOString();
-  }
-
-  const defaultBranch = isNonEmptyString(body.default_branch)
-    ? body.default_branch.trim()
-    : "";
-  if (!defaultBranch) fields.push("default_branch");
-
-  if (fields.length > 0) {
-    return { error: { message: "Invalid repository", fields } };
-  }
-
-  return {
-    value: {
-      githubId,
-      name,
-      fullName,
-      private: body.private,
-      htmlUrl,
-      description,
-      updatedAt,
-      language,
-      defaultBranch,
-    },
-  };
-};
 
 const saveRepository = async (req, res) => {
-  const repository = parseRepository(req.body);
-  if (repository.error) {
-    return res.status(400).json(repository.error);
-  }
-
   const userId = getAuthenticatedUserId(req);
+
   if (userId == null) {
     return res.status(401).json({
       message: "Authenticated user is required",
     });
   }
+
+  const repository = req.body;
 
   try {
     const result = await pool.query(
@@ -111,15 +39,15 @@ const saveRepository = async (req, res) => {
                  description, updated_at, language, default_branch, user_id,
                  (xmax = 0) AS inserted`,
       [
-        repository.value.githubId,
-        repository.value.name,
-        repository.value.fullName,
-        repository.value.private,
-        repository.value.htmlUrl,
-        repository.value.description,
-        repository.value.updatedAt,
-        repository.value.language,
-        repository.value.defaultBranch,
+        repository.id,
+        repository.name,
+        repository.full_name,
+        repository.private,
+        repository.html_url,
+        repository.description,
+        repository.updated_at,
+        repository.language,
+        repository.default_branch,
         userId,
       ]
     );
