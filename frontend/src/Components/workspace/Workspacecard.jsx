@@ -6,7 +6,7 @@ const handleAddClick = async () => {
   window.location.href = "http://localhost:5001/api/github";
 };
 
-function Workspacecard( { githubConnected } ) {
+function Workspacecard( { githubConnected, onDisconnectGithub } ) {
   return (
     <div className="workspace-card">
       <p className="workspace-card__label">Add to GitHub</p>
@@ -22,7 +22,16 @@ function Workspacecard( { githubConnected } ) {
       <button className="workspace-card__button" type="button" onClick={handleAddClick}>
         + Add
       </button>) : (
+      <>
       <DialogBox />
+      <button
+        className="workspace-card__button"
+        type="button"
+        onClick={onDisconnectGithub}
+      >
+        Disconnect GitHub
+      </button>
+      </>
     )}
 
     

@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const githubRoutes = require("./routes/githubRoutes");
+const repositoryRoutes = require("./routes/repositoryRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -15,6 +16,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/github", githubRoutes);
+app.use("/api/repositories", repositoryRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

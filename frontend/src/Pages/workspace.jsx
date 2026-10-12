@@ -20,11 +20,21 @@ function Workspace() {
 
   }, []);
 
+  const handleDisconnectGithub = () => {
+    document.cookie =
+      "github_access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+
+    setGithubConnected(false);
+  };
+
   return <div>
     <WorkspaceHeader />
     <h1>Workspace</h1>
     
-    <Workspacecard githubConnected={githubConnected} /> 
+    <Workspacecard
+      githubConnected={githubConnected}
+      onDisconnectGithub={handleDisconnectGithub}
+    /> 
     </div> ;
 
 }
