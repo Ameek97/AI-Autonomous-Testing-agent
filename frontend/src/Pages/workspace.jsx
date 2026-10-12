@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import  WorkspaceHeader  from "../Components/workspace/WorkspaceHeader.jsx";
 import Workspacecard from "../Components/workspace/Workspacecard.jsx";
-
+import NCRepoCard from "../Components/workspace/ncRepocard.jsx";
+import Repocard from "../Components/workspace/repocard.jsx";
 
 function Workspace() {
 
@@ -27,7 +28,9 @@ function Workspace() {
     setGithubConnected(false);
   };
 
-  return <div>
+
+  return (
+  <div className="workspace-page">
     <WorkspaceHeader />
     <h1>Workspace</h1>
     
@@ -35,7 +38,14 @@ function Workspace() {
       githubConnected={githubConnected}
       onDisconnectGithub={handleDisconnectGithub}
     /> 
-    </div> ;
+
+
+
+    <h1 className="text-[2em] font-bold"> Repositories </h1> 
+   
+    {githubConnected ? <Repocard/> : <NCRepoCard />}
+
+    </div>) 
 
 }
 

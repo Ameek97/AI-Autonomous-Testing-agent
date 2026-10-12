@@ -1,3 +1,8 @@
+.repo-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
 .repo-button {
   box-sizing: border-box;
   display: block;

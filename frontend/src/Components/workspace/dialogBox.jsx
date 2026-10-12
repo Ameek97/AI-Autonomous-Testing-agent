@@ -77,7 +77,7 @@ function DialogBox() {
           </DialogDescription>
         </DialogHeader>
 
-        <div>
+        <div className="repo-list">
           <ul>
             {repos.map((repo) => {
 
