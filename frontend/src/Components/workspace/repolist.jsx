@@ -26,7 +26,37 @@ function handleGenerate ( {repo} ){
 }
 
 
-function Repolist( {repolist} ){
+function Repolist(  ){
+
+const [repolist, setrepolist] = useState([
+  {
+    id: 1,
+    name: "TestPilot",
+    full_name: "Ameek97/TestPilot",
+    description: "AI-powered testing agent",
+    language: "JavaScript",
+    private: false,
+    html_url: "https://github.com",
+  },
+  {
+    id: 2,
+    name: "ai_tutor",
+    full_name: "Ameek97/ai_tutor",
+    description: "AI-powered study platform",
+    language: "JavaScript",
+    private: false,
+    html_url: "https://github.com",
+  },
+  {
+    id: 3,
+    name: "ecommerce-api",
+    full_name: "Ameek97/ecommerce-api",
+    description: "REST API for an ecommerce application",
+    language: "JavaScript",
+    private: true,
+    html_url: "https://github.com",
+  },
+]);
 
   const [loading, setloading] = useState(false);
 
@@ -70,12 +100,14 @@ function Repolist( {repolist} ){
 
                 <AccordionContent>       {/* the content inside */}
                   <p className={repo.description ? "repo-accordion__body" : "repo-accordion__body is-empty"}>
-    
+                    
                     {description}
+
+                   </p>
                     <button disabled={loading} onClick= {()=> handleGenerate(repo) } > Generate </button>
 
 
-                  </p>
+                 
                 </AccordionContent>
 
 

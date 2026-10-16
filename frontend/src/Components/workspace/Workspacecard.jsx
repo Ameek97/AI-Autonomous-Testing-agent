@@ -24,6 +24,7 @@ function Workspacecard( { githubConnected, onDisconnectGithub } ) {
       </button>) : (
       <>
       <DialogBox />
+      
       <button
         className="workspace-card__button"
         type="button"

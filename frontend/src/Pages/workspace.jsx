@@ -6,6 +6,8 @@ import Repocard from "../Components/workspace/repocard.jsx";
 
 function Workspace() {
 
+
+
   const [githubConnected, setGithubConnected] = useState(false);
   useEffect(() => {
     const cookies = document.cookie.split("; ");
@@ -43,7 +45,7 @@ function Workspace() {
 
     <h1 className="text-[2em] font-bold"> Repositories </h1> 
    
-    {githubConnected ? <Repocard/> : <NCRepoCard />}
+    {githubConnected ? <Repocard /> : <NCRepoCard />}
 
     </div>) 
 

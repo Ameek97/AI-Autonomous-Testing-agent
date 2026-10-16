@@ -85,7 +85,7 @@ function DialogBox() {
               return (
                 <li key={repo.id}>
                  <button type="button" 
-                         onClick={() => setSelectedRepo(repo)} 
+                         onClick={() => setSelectedRepo(repo)  } 
                          className={ selectedRepo?.id === repo.id ? "repo-button selected" : "repo-button" } > 
                          
                          {repo.name}
@@ -101,7 +101,7 @@ function DialogBox() {
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button type="button" disabled={!selectedRepo} onClick={() => handleAddRepository(selectedRepo)} >Close</Button>
+            <Button type="button" disabled={!selectedRepo} onClick={() => handleAddRepository(selectedRepo)} >Add</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>
