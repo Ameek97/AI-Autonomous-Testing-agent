@@ -2,6 +2,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import "./tclist.css";
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Settings } from "lucide-react"
 import { useState } from "react";
 
 
@@ -41,7 +42,15 @@ function Tclist({ tclist = [] }) {
 
            <Badge variant = "secondary" >{testCase.type}</Badge>
            <Badge variant = "secondary" >{testCase.status}</Badge>
-           <Button size = "icon"  variant="outline"> setting </Button> 
+           <Button
+             type="button"
+             size="icon-sm"
+             variant="outline"
+             className="testcase-list__settings"
+             aria-label="Settings"
+           >
+             <Settings />
+           </Button> 
 
 
           </div>
@@ -50,7 +59,13 @@ function Tclist({ tclist = [] }) {
       ))}
     </ul>
  
-    <button disabled={selectedTestCases.length === 0}> Test </button>
+    <Button
+      type="button"
+      className="testcase-list__action"
+      disabled={selectedTestCases.length === 0}
+    >
+      Get Result
+    </Button>
     </>
   );
 }
