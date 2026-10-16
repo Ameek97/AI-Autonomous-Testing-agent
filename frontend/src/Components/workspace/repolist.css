@@ -1,10 +1,20 @@
 .repo-accordion {
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   align-self: stretch;
-  width: auto;
   gap: 12px;
+  width: auto;
+  max-width: 100%;
+  min-width: 0;
   margin: 4px 16px 24px;
   font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+}
+
+.repo-accordion *,
+.repo-accordion *::before,
+.repo-accordion *::after {
+  box-sizing: border-box;
 }
 
 .repo-accordion__item {
@@ -15,13 +25,12 @@
   overflow: hidden;
   transition:
     border-color 150ms ease,
-    background-color 150ms ease,
     box-shadow 150ms ease;
 }
 
-.repo-accordion__item:hover {
+.repo-accordion__item:hover,
+.repo-accordion__item[data-state="open"] {
   border-color: #d1d5db;
-  background: #fafafa;
   box-shadow:
     0 1px 2px rgba(15, 23, 42, 0.05),
     0 8px 24px rgba(15, 23, 42, 0.06);
@@ -31,14 +40,18 @@
   align-items: center;
   gap: 16px;
   width: 100%;
+  min-width: 0;
   padding: 16px 18px;
   background: transparent;
+  color: inherit;
   text-align: left;
   text-decoration: none;
+  cursor: pointer;
 }
 
-.repo-accordion__trigger:hover {
-  background: transparent;
+.repo-accordion__trigger:hover,
+.repo-accordion__trigger:focus-visible {
+  background: #fafafa;
   text-decoration: none;
 }
 
@@ -48,55 +61,59 @@
   box-shadow: none;
 }
 
+.repo-accordion__trigger [data-slot="accordion-trigger-icon"] {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  color: #6b7280;
+}
+
 .repo-accordion__summary {
   display: flex;
-  flex: 1;
+  flex: 1 1 auto;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
+  gap: 4px;
   min-width: 0;
 }
 
 .repo-accordion__name {
   margin: 0;
   max-width: 100%;
-  overflow-wrap: anywhere;
+  color: #111827;
   font-size: 16px;
   font-weight: 700;
   line-height: 1.3;
   letter-spacing: -0.01em;
-  color: #111827;
+  overflow-wrap: anywhere;
 }
 
 .repo-accordion__fullname {
   margin: 0;
   max-width: 100%;
-  overflow-wrap: anywhere;
+  color: #6b7280;
   font-size: 13px;
   font-weight: 400;
   line-height: 1.4;
-  color: #6b7280;
+  overflow-wrap: anywhere;
 }
 
 .repo-accordion__description {
   margin: 2px 0 0;
   max-width: 100%;
+  color: #4b5563;
   font-size: 14px;
   font-weight: 400;
   line-height: 1.5;
-  color: #4b5563;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  overflow-wrap: anywhere;
 }
 
-.repo-accordion__item[data-state="open"] .repo-accordion__description {
-  display: none;
-}
-
-.repo-accordion__description.is-empty,
-.repo-accordion__body.is-empty {
+.repo-accordion__description.is-empty {
   color: #9ca3af;
   font-style: italic;
 }
@@ -107,7 +124,7 @@
   align-items: center;
   gap: 8px;
   min-width: 0;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .repo-accordion__chip {
@@ -131,20 +148,75 @@
 }
 
 .repo-accordion__updated {
+  color: #6b7280;
   font-size: 12px;
   font-weight: 500;
   line-height: 1.4;
-  color: #6b7280;
 }
 
-.repo-accordion__body {
+.repo-accordion [data-slot="accordion-content"][data-state="open"] {
+  height: auto;
+  overflow: visible;
+  animation: none;
+}
+
+.repo-accordion [data-slot="accordion-content"][data-state="open"] .repo-accordion__content {
+  height: auto !important;
+}
+
+.repo-accordion__content {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.repo-accordion__content p {
+  margin-bottom: 0;
+}
+
+.repo-accordion__panel {
+  margin: 0 16px 16px;
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #f8fafc;
+  min-width: 0;
+}
+
+.repo-accordion__status {
   margin: 0;
-  padding: 0 18px 16px;
+  color: #6b7280;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.5;
-  color: #4b5563;
-  overflow-wrap: anywhere;
+}
+
+.repo-accordion__generate {
+  margin: 0;
+  padding: 8px 14px;
+  border: 1px solid #111827;
+  border-radius: 8px;
+  background: #111827;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
+}
+
+.repo-accordion__generate:hover {
+  background: #1f2937;
+}
+
+.repo-accordion__generate:focus-visible {
+  outline: 2px solid #111827;
+  outline-offset: 2px;
+}
+
+.repo-accordion__generate:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 @media (max-width: 640px) {
@@ -159,7 +231,12 @@
     padding: 14px;
   }
 
-  .repo-accordion__body {
-    padding: 0 14px 14px;
+  .repo-accordion__trigger [data-slot="accordion-trigger-icon"] {
+    margin-top: 2px;
+  }
+
+  .repo-accordion__panel {
+    margin: 0 12px 12px;
+    padding: 12px;
   }
 }

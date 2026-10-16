@@ -1,0 +1,63 @@
+.testcase-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.testcase-list__item {
+  box-sizing: border-box;
+  min-width: 0;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.testcase-list__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+
+.testcase-list__header button {
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+
+.testcase-list__title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  color: #111827;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.testcase-list__description {
+  margin: 6px 0 0 26px;
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .testcase-list__item {
+    padding: 10px 12px;
+  }
+
+  .testcase-list__description {
+    margin-left: 0;
+  }
+}

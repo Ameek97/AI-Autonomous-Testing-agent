@@ -7,6 +7,8 @@ import {
 import "./repolist.css"
 
 import { useState, useEffect  } from "react"
+import axios from "axios"
+import Tclist from "../testcases/tclist.jsx"
 
 const formatUpdated = (value) => {
   if (!value) return ""
@@ -19,25 +21,50 @@ const formatUpdated = (value) => {
   }).format(date)
 }
 
+const getTestcase = async (repoid, settcload, setTestcase) => {
+  
+  settcload(true);
 
-function handleGenerate ( {repo} ){
-   
-   
-}
+  try {
+
+    setTestcase([]);
+    const response = await axios.get(
+      `http://localhost:5001/api/testcase/${repoid}`
+    );
+    
+    console.log("Fetched test cases:", response.data);
+    setTestcase(response.data);
+  } catch (error) {
+    console.error(
+      "Failed to fetch test cases:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+
+  finally{
+    settcload(false);
+  }
+};
+
+
 
 
 function Repolist(  ){
 
+const [tcloading, settcload] = useState(false);  
+const [tclist, setTestcase] = useState([]);
+
 const [repolist, setrepolist] = useState([
-  {
-    id: 1,
-    name: "TestPilot",
-    full_name: "Ameek97/TestPilot",
-    description: "AI-powered testing agent",
-    language: "JavaScript",
-    private: false,
-    html_url: "https://github.com",
-  },
+{
+  id: 1,
+  name: "demo-app",
+  full_name: "testpilot_demo/demo-app",
+  description: "Demo repository for TestPilot",
+  language: "JavaScript",
+  private: false,
+  html_url: "https://github.com/testpilot-demo/demo-app",
+},
   {
     id: 2,
     name: "ai_tutor",
@@ -60,11 +87,33 @@ const [repolist, setrepolist] = useState([
 
   const [loading, setloading] = useState(false);
 
+  async function handleGenerate(repo) {
+            setloading(true);
+
+            try {
+              const response = await axios.post(
+                "http://localhost:5001/api/github/generate-tests",
+                { repo }
+              );
+
+              console.log(response.data);
+            } catch (error) {
+              console.error(
+                "Failed to generate test cases:",
+                error.response?.data || error.message
+              );
+            } finally {
+              setloading(false);
+            }
+          }
+
+
+
     return (
-        <Accordion type="single" collapsible className="repo-accordion">
+        <Accordion type="single" collapsible className="repo-accordion"  onValueChange={(value) => {getTestcase(value, settcload, setTestcase);}} >
 
           {repolist.map( (repo) => {
-
+ 
             const updated = formatUpdated(repo.updated_at)
             const description = repo.description || "No description available."
             const descriptionClass = repo.description
@@ -98,14 +147,22 @@ const [repolist, setrepolist] = useState([
 
 
 
-                <AccordionContent>       {/* the content inside */}
-                  <p className={repo.description ? "repo-accordion__body" : "repo-accordion__body is-empty"}>
+                <AccordionContent className="repo-accordion__content">
+                    <div className="repo-accordion__panel">
+                      {tcloading ? (<p className="repo-accordion__status">Test cases are still loading...</p>) : tclist.length === 0 ? (
+                        <button
+                          className="repo-accordion__generate"
+                          disabled={loading}
+                          onClick={() => handleGenerate(repo)}>
+                          Generate
+                        </button>
+                      ) : (
+                        <Tclist tclist={tclist} />
+                      )}
+                    </div>
+                   
                     
-                    {description}
-
-                   </p>
-                    <button disabled={loading} onClick= {()=> handleGenerate(repo) } > Generate </button>
-
+                    
 
                  
                 </AccordionContent>
