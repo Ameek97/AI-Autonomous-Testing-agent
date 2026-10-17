@@ -2,14 +2,14 @@ const pool = require("../db/connections");
 
 // No authentication middleware, session, or user lookup is implemented.
 // The request body is not a source for the user id.
-const getAuthenticatedUserId = () => null;
+
 
 
 
 
 
 const saveRepository = async (req, res) => {
-  const userId = getAuthenticatedUserId(req);
+  const userId = req.user.id;
 
   if (userId == null) {
     return res.status(401).json({

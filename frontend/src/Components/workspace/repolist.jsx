@@ -50,43 +50,10 @@ const getTestcase = async (repoid, settcload, setTestcase) => {
 
 
 
-function Repolist(  ){
+function Repolist({ repolist = [] }) {
 
 const [tcloading, settcload] = useState(false);  
 const [tclist, setTestcase] = useState([]);
-
-const [repolist, setrepolist] = useState([
-{
-  id: 1,
-  name: "demo-app",
-  full_name: "testpilot_demo/demo-app",
-  description: "Demo repository for TestPilot",
-  language: "JavaScript",
-  private: false,
-  html_url: "https://github.com/testpilot-demo/demo-app",
-  target_domain: "localhost:3000",
-},
-  {
-    id: 2,
-    name: "ai_tutor",
-    full_name: "Ameek97/ai_tutor",
-    description: "AI-powered study platform",
-    language: "JavaScript",
-    private: false,
-    html_url: "https://github.com",
-    target_domain: "localhost:3000",
-  },
-  {
-    id: 3,
-    name: "ecommerce-api",
-    full_name: "Ameek97/ecommerce-api",
-    description: "REST API for an ecommerce application",
-    language: "JavaScript",
-    private: true,
-    html_url: "https://github.com",
-    target_domain: "localhost:3000",
-  },
-]);
 
   const [loading, setloading] = useState(false);
 

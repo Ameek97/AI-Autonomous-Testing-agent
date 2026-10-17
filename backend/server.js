@@ -8,8 +8,11 @@ const testcaseRoutes = require("./routes/testcaseRoutes");
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+const mock = require("./middleware/mock");
 app.use(express.json());
 app.use(cors());
+
+app.use(mock);
 
 app.get("/", (req, res) => {
   res.json({ message: "Backend is running" });

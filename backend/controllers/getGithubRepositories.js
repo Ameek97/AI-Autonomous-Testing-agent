@@ -1,12 +1,23 @@
 const axios = require("axios");
-
+const pool = require("../db/connections");
 const getGithubRepositories = async (req, res) => {
 
   try{
 
+const userId = req.user.id;
+
+// Fetch token from DB
+const result = await pool.query(
+  "SELECT github_access_token FROM users WHERE id = $1",
+  [userId]
+);
+
+const token = result.rows[0]?.github_access_token;
+
+
 const response = await axios.get("https://api.github.com/user/repos", {
   headers: {
-    Authorization: `Bearer ${process.env.GITHUB_ACCESS_TOKEN}`,
+    Authorization: `Bearer ${token}`,
     Accept: "application/vnd.github+json",
   },
 });
