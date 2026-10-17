@@ -3,7 +3,7 @@ import "./tclist.css";
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Settings , ClipboardList,CheckCircle,XCircle,TrendingUp} from "lucide-react"
-import { useRef, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import DialogBox from "../project-settings/dialogbox";
 import StatusCard from "../workspace/statuscard"
@@ -19,58 +19,43 @@ const handlecheck = (checked, testcase, setSelectedTestCases) => {
    
     };
 
+const handleGetResult = async (selectedTestCases, target_domain, globalInstructions, setIsExecuting,setStats, setSelectedTestCases) => {
+
+  setIsExecuting(true); 
+  const response = await axios.post("http://localhost:5001/api/testcase/execute", {
+    testCaseIds: selectedTestCases.map((testcase) => testcase.id),
+    target_domain,
+    global_instruction: globalInstructions,
+  });
+
+  const result = response.data.results;
+
+   const passed = result.filter(
+    (test) => test.status === "passed" ).length;
+
+   const failed = result.filter(
+    (test) => test.status === "failed" ).length;
+
+  const total = result.length;
+
+  const successRate = total > 0
+    ? Math.round((passed / total) * 100)
+    : 0;
+
+  setStats({
+    passed: passed,
+    failed: failed,
+    successRate: successRate
+})  
+  setSelectedTestCases([]);
+  setIsExecuting(false);
+};
+
 function Tclist({ tclist, target_domain, globalInstructions, repositoryId }, ) {
   
    const [selectedTestCases, setSelectedTestCases] = useState([]);
-   const [results, setResults] = useState([]);
-   const [stats, setStats] = useState({  passed: 0,failed: 0,successRate: 0});
-   const [running, setRunning] = useState(false);
-   const [error, setError] = useState("");
-   const runningRef = useRef(false);
-
-   const handleGetResult = async () => {
-     if (runningRef.current) return;
-
-     if (!target_domain) {
-       setError("Target domain is required");
-       return;
-     }
-
-     runningRef.current = true;
-     setRunning(true);
-     setError("");
-
-     try {
-       const response = await axios.post(
-         "http://localhost:5001/api/testcase/execute",
-         {
-           testCaseIds: selectedTestCases.map((testcase) => testcase.id),
-           target_domain,
-           global_instruction: globalInstructions ?? null,
-         }
-       );
-
-       const executionResults = Array.isArray(response.data?.results)
-         ? response.data.results
-         : [];
-       const passed = executionResults.filter((result) => result.status === "passed").length;
-       const failed = executionResults.filter((result) => result.status === "failed").length;
-       const successRate = executionResults.length === 0
-         ? 0
-         : Math.round((passed / executionResults.length) * 100);
-
-       setResults(executionResults);
-       setStats({ passed, failed, successRate });
-     } catch (requestError) {
-       const message = requestError.response?.data?.message || "Failed to execute test cases";
-       setError(message);
-       console.error("Failed to execute test cases:", requestError.response?.data || requestError.message);
-     } finally {
-       runningRef.current = false;
-       setRunning(false);
-     }
-   };  
-
+   const [stats, setStats] = useState({  passed: 0,failed: 0,successRate: 0});  
+   const [isExecuting, setIsExecuting] = useState(false);
 
     return (
 
@@ -80,7 +65,7 @@ function Tclist({ tclist, target_domain, globalInstructions, repositoryId }, ) {
     <StatusCard title="TEST CASES" value={tclist.length} icon={<ClipboardList />} bgColor="status-card--cases" />
     <StatusCard title="CASES PASSED" value={stats.passed} icon={<CheckCircle />} bgColor="status-card--passed" />
     <StatusCard title="CASES FAILED" value={stats.failed} icon={<XCircle />} bgColor="status-card--failed" />
-    <StatusCard title="SUCCESS RATE" value={`${stats.successRate}%`} icon={<TrendingUp />} bgColor="status-card--rate" />
+    <StatusCard title="SUCCESS RATE" value={stats.successRate} icon={<TrendingUp />} bgColor="status-card--rate" />
     </div>
     
     
@@ -124,13 +109,12 @@ function Tclist({ tclist, target_domain, globalInstructions, repositoryId }, ) {
     <Button
       type="button"
       className="testcase-list__action"
-      disabled={selectedTestCases.length === 0 || running}
-      onClick={() => handleGetResult()}
+      disabled={selectedTestCases.length === 0 || isExecuting}
+      onClick={ () => handleGetResult(selectedTestCases, target_domain, globalInstructions, setIsExecuting, setStats, setSelectedTestCases) }
 
     >
-      {running ? "Running..." : "Get Result"}
+      Get Result
     </Button>
-    {error ? <p className="testcase-list__error" role="alert">{error}</p> : null}
     </>
   );
 }
