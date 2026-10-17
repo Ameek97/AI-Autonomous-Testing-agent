@@ -64,6 +64,7 @@ const [repolist, setrepolist] = useState([
   language: "JavaScript",
   private: false,
   html_url: "https://github.com/testpilot-demo/demo-app",
+  target_domain: "localhost:3000",
 },
   {
     id: 2,
@@ -73,6 +74,7 @@ const [repolist, setrepolist] = useState([
     language: "JavaScript",
     private: false,
     html_url: "https://github.com",
+    target_domain: "localhost:3000",
   },
   {
     id: 3,
@@ -82,6 +84,7 @@ const [repolist, setrepolist] = useState([
     language: "JavaScript",
     private: true,
     html_url: "https://github.com",
+    target_domain: "localhost:3000",
   },
 ]);
 
@@ -157,7 +160,7 @@ const [repolist, setrepolist] = useState([
                           Generate
                         </button>
                       ) : (
-                        <Tclist tclist={tclist} />
+                        <Tclist tclist={tclist} target_domain={repo.target_domain} globalInstructions={repo.global_instruction} repositoryId={repo.id} />
                       )}
                     </div>
                    

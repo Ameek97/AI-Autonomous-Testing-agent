@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Settings } from "lucide-react"
 import { useState } from "react";
-
+import DialogBox from "../project-settings/dialogbox";
 
 {/* if checked, add it to state, else remove it from the state */}
 const handlecheck = (checked, testcase, setSelectedTestCases) => {
@@ -17,15 +17,20 @@ const handlecheck = (checked, testcase, setSelectedTestCases) => {
    
     };
 
-function Tclist({ tclist = [] }) {
+function Tclist({ tclist, target_domain, globalInstructions, repositoryId }, ) {
   
    const [selectedTestCases, setSelectedTestCases] = useState([]);
+  
 
-   
 
     return (
 
     <>    
+
+    <DialogBox targetDomain={target_domain} globalInstructions={globalInstructions} repositoryId={repositoryId} />
+    
+
+
     <ul className="testcase-list">
       
       {tclist.map((testCase) => (
