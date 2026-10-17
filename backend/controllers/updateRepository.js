@@ -4,12 +4,6 @@ const updateRepository = async (req, res) => {
   const repositoryId = req.params.repositoryId;
   const { target_domain, global_instruction } = req.body;
 
-  if (target_domain == null || String(target_domain).trim() === "") {
-    return res.status(400).json({
-      message: "Target domain is required",
-    });
-  }
-
   try {
     const result = await pool.query(
       `UPDATE repositories

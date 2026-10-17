@@ -25,7 +25,7 @@ const handlechange = (type, val, setsettings )=>{
 
         const handleSave = async (settings, repositoryId, setOpen  ) => {
         try {
-            const res = await axios.put(
+            const res = await axios.patch(
             `http://localhost:5001/api/repositories/${repositoryId}`,
             settings
             );

@@ -5,6 +5,6 @@ const updateRepository = require("../controllers/updateRepository");
 const router = express.Router();
 
 router.post("/", saveRepository);
-router.put("/:repositoryId", updateRepository);
+router.patch("/:repositoryId", updateRepository);
 
 module.exports = router;
