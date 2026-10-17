@@ -1,0 +1,82 @@
+.status-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  margin: 0 0 14px;
+}
+
+.status-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.status-card__text {
+  min-width: 0;
+}
+
+.status-card__title {
+  margin: 0;
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+}
+
+.status-card__value {
+  margin: 4px 0 0;
+  color: #111827;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.status-card__icon {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+}
+
+.status-card__icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.status-card--cases .status-card__icon {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-card--passed .status-card__icon {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status-card--failed .status-card__icon {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-card--rate .status-card__icon {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+@media (max-width: 720px) {
+  .status-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
