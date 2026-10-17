@@ -22,7 +22,7 @@ const formatUpdated = (value) => {
 }
 
 const getTestcase = async (repoid, settcload, setTestcase) => {
-  
+  console.log("[TestCases] Request sent", { repoid });
   settcload(true);
 
   try {
@@ -31,9 +31,10 @@ const getTestcase = async (repoid, settcload, setTestcase) => {
     const response = await axios.get(
       `http://localhost:5001/api/testcase/${repoid}`
     );
-    
-    console.log("Fetched test cases:", response.data);
-    setTestcase(response.data);
+    const cases = Array.isArray(response.data) ? response.data : [];
+    console.log("[TestCases] Response received", { count: cases.length });
+    setTestcase(cases);
+    console.log("[TestCases] State updated", { count: cases.length });
   } catch (error) {
     console.error(
       "Failed to fetch test cases:",
@@ -80,7 +81,12 @@ const [tclist, setTestcase] = useState([]);
 
 
     return (
-        <Accordion type="single" collapsible className="repo-accordion"  onValueChange={(value) => {getTestcase(value, settcload, setTestcase);}} >
+        <Accordion type="single" collapsible className="repo-accordion"  onValueChange={(value) => {
+          console.log("[TestCases] Accordion changed", { value });
+          if (value) {
+            getTestcase(value, settcload, setTestcase);
+          }
+        }} >
 
           {repolist.map( (repo) => {
  

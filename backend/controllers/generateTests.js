@@ -31,6 +31,10 @@ const saveToDb = async (testCases, repoId, repo) => {
         "generated",
       ]
     );
+    console.log("[GenerateTests:9] Inserted test case", {
+      repoId,
+      title: testCase.title,
+    });
   }
 };
 
@@ -53,9 +57,9 @@ const getUserToken = async (userId) => {
 // Get repository details from PostgreSQL
 const getrepo = async (repoId) => {
   const result = await pool.query(
-    `SELECT name, full_name, default_branch, user_id
+    `SELECT id, name, full_name, default_branch, user_id
      FROM repositories
-     WHERE id = $1`,
+     WHERE github_id = $1`,
     [repoId]
   );
 
@@ -66,6 +70,7 @@ const getrepo = async (repoId) => {
   const repository = result.rows[0];
 
   return {
+    id: repository.id,
     owner: repository.full_name.split("/")[0],
     name: repository.name,
     branch: repository.default_branch,
@@ -104,6 +109,7 @@ const getFileContent = async (owner, repo, path, branch, token) => {
   );
 
   if (!response.data.content) {
+    console.error(`No content found for file: ${path}`);
     throw new Error(`Could not read file: ${path}`);
   }
 
@@ -166,32 +172,68 @@ const filterRepoTree = (repotree) => {
 // Generate test cases
 const generateTests = async (req, res) => {
   try {
-   
+    const receivedRepoId = req.body && req.body.repo && req.body.repo.id;
+    console.log("[GenerateTests:1] Request received", {
+      hasRepoId: Boolean(receivedRepoId),
+      repoId: receivedRepoId,
+    });
+
     // 1. Get repository details
+    console.log("[GenerateTests:2] Looking up repository", {
+      repoId: receivedRepoId,
+    });
     const repo = await getrepo(req.body.repo.id);
-    const repoId = req.body.repo.id;
+    const repoId = repo.id;
+    console.log("[GenerateTests:2] Repository found", {
+      id: repo.id,
+      name: repo.name,
+      owner: repo.owner,
+      branch: repo.branch,
+      userId: repo.userId,
+    });
 
     // 2. Get the user's GitHub token
+    console.log("[GenerateTests:3] Retrieving GitHub token", {
+      userId: repo.userId,
+    });
     const token = await getUserToken(repo.userId);
+    console.log("[GenerateTests:3] GitHub token lookup finished", {
+      tokenFound: Boolean(token),
+    });
 
     // 3. Get the repository file tree
+    console.log("[GenerateTests:4] Requesting GitHub file tree", {
+      owner: repo.owner,
+      name: repo.name,
+      branch: repo.branch,
+    });
     const repotree = await getrepostructure(
       repo.owner,
       repo.name,
       repo.branch,
       token
     );
+    console.log("[GenerateTests:4] GitHub file tree received", {
+      fileCount: Array.isArray(repotree) ? repotree.length : 0,
+    });
 
     // 4. Filter useful files
     const filteredfiles = filterRepoTree(repotree);
+    console.log("[GenerateTests:5] Files remaining after filter", {
+      fileCount: filteredfiles.length,
+    });
 
     if (filteredfiles.length === 0) {
+      console.log("[GenerateTests:5] No supported source files found");
       return res.status(400).json({
         message: "No supported source files found in the repository",
       });
     }
 
     // 5. Fetch file contents
+    console.log("[GenerateTests:6] Fetching file contents", {
+      fileCount: filteredfiles.length,
+    });
     const files = await Promise.all(
       filteredfiles.map((file) =>
         getFileContent(
@@ -203,6 +245,9 @@ const generateTests = async (req, res) => {
         )
       )
     );
+    console.log("[GenerateTests:6] File contents fetched", {
+      fileCount: files.length,
+    });
 
     // 6. Combine file contents into repository context
     const repoContext = files
@@ -254,8 +299,9 @@ Important rules:
 `;
 
     // 9. Generate structured test cases
+    console.log("[GenerateTests:7] Calling Gemini");
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.8-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -307,25 +353,48 @@ Important rules:
         },
       },
     });
+    console.log("[GenerateTests:7] Gemini response received", {
+      textLength: response.text ? response.text.length : 0,
+    });
 
     // 10. Parse Gemini's response
-    const result = JSON.parse(response.text);
+    let result;
+    try {
+      result = JSON.parse(response.text);
+    } catch (parseError) {
+      console.error("[GenerateTests:7] Failed to parse Gemini response", parseError.message);
+      throw parseError;
+    }
     const testCases = result.testCases;
+    console.log("[GenerateTests:8] Parsed test cases", {
+      count: Array.isArray(testCases) ? testCases.length : 0,
+    });
 
     if (!Array.isArray(testCases) || testCases.length === 0) {
       throw new Error("Gemini did not generate any test cases");
     }
 
     // 11. Save test cases to PostgreSQL
+    console.log("[GenerateTests:9] Saving test cases", {
+      count: testCases.length,
+      repoId,
+    });
     await saveToDb(testCases, repoId, repo);
+    console.log("[GenerateTests:9] All test cases saved", {
+      count: testCases.length,
+    });
 
     // 12. Send response to frontend
+    console.log("[GenerateTests:10] Returning success response", {
+      count: testCases.length,
+    });
     return res.status(201).json({
       message: "Test cases generated and saved successfully",
       count: testCases.length,
     });
   } catch (error) {
-    console.error("Error generating test cases:", error.message);
+    console.error("[GenerateTests:11] Generation failed", error.message);
+    console.error(error.stack);
 
     return res.status(500).json({
       message: "Failed to generate test cases",

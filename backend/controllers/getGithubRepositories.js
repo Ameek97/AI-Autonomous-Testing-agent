@@ -38,8 +38,8 @@ const repos = response.data.map((repo) => {
     owner : repo.owner.login
   };
 });
-     console.log(response);
-     console.log( repos )
+     
+    
     res.json( repos );
 
   } 

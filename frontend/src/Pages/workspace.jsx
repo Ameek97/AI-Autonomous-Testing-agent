@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 import  WorkspaceHeader  from "../Components/workspace/WorkspaceHeader.jsx";
 import Workspacecard from "../Components/workspace/Workspacecard.jsx";
-import NCRepoCard from "../Components/workspace/ncRepocard.jsx";
 import Repocard from "../Components/workspace/repocard.jsx";
 
 function Workspace() {
@@ -9,6 +9,8 @@ function Workspace() {
 
 
   const [githubConnected, setGithubConnected] = useState(false);
+  const [repositories, setRepositories] = useState([]);
+
   useEffect(() => {
     const cookies = document.cookie.split("; ");
 
@@ -21,6 +23,19 @@ function Workspace() {
       setGithubConnected(true);
     }
 
+    const getSavedRepositories = async () => {
+      try {
+        const result = await axios.get("http://localhost:5001/api/repositories");
+        setRepositories(Array.isArray(result.data) ? result.data : []);
+      } catch (error) {
+        console.error(
+          "Failed to fetch repositories:",
+          error.response?.data || error.message
+        );
+      }
+    };
+
+    getSavedRepositories();
   }, []);
 
   const handleDisconnectGithub = () => {
@@ -45,7 +60,7 @@ function Workspace() {
 
     <h1 className="text-[2em] font-bold"> Repositories </h1> 
    
-    {githubConnected ? <Repocard /> : <NCRepoCard />}
+    <Repocard repolist={repositories} />
 
     </div>) 
 

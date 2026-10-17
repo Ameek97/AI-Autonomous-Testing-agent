@@ -3,11 +3,17 @@ const pool = require("../db/connections");
 const gettestcases = async (req, res) => {
   try {
     const repoid = req.params.repoid;
-    const userid = 1;
+    const userid = req.user.id;
 
     const result = await pool.query(
-      `SELECT * FROM test_cases
-       WHERE repo_id = $1 AND user_id = $2`,
+      `SELECT test_cases.*
+       FROM test_cases
+       JOIN repositories ON repositories.id = test_cases.repo_id
+       WHERE test_cases.user_id = $2
+         AND (
+           repositories.id::text = $1
+           OR repositories.github_id::text = $1
+         )`,
       [repoid, userid]
     );
 
