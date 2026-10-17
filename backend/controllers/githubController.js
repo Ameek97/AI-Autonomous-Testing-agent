@@ -1,6 +1,7 @@
 const axios = require("axios");
 const crypto = require("crypto");
 const getGithubRepositories = require("./getGithubRepositories");
+const pool = require("../db/connections");
 
 const startGithubOAuth = (req, res) => {
   const stateValue = crypto.randomBytes(32).toString("hex");
@@ -37,6 +38,13 @@ const githubCallback = async (req, res) => {
     );
 
     const accessToken = result.data.access_token;
+
+    await pool.query(
+      `UPDATE users
+      SET github_access_token = $1
+      WHERE id = $2`,
+      [accessToken, userId]
+    );
 
     console.log("GitHub access token:", accessToken);
 

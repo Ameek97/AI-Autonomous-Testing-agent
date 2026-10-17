@@ -159,13 +159,16 @@ const filterRepoTree = (repotree) => {
   });
 };
 
+
+
+
+
 // Generate test cases
 const generateTests = async (req, res) => {
   try {
-    const repoId = req.params.repoid;
-
+   
     // 1. Get repository details
-    const repo = await getrepo(repoId);
+    const repo = req.body.repo;
 
     // 2. Get the user's GitHub token
     const token = await getUserToken(repo.userId);
