@@ -168,7 +168,8 @@ const generateTests = async (req, res) => {
   try {
    
     // 1. Get repository details
-    const repo = req.body.repo;
+    const repo = await getrepo(req.body.repo.id);
+    const repoId = req.body.repo.id;
 
     // 2. Get the user's GitHub token
     const token = await getUserToken(repo.userId);

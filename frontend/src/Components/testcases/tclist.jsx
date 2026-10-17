@@ -17,6 +17,13 @@ const handlecheck = (checked, testcase, setSelectedTestCases) => {
    
     };
 
+const handleGetResult = async() =>{
+    
+   
+
+
+}
+
 function Tclist({ tclist, target_domain, globalInstructions, repositoryId }, ) {
   
    const [selectedTestCases, setSelectedTestCases] = useState([]);
@@ -68,6 +75,8 @@ function Tclist({ tclist, target_domain, globalInstructions, repositoryId }, ) {
       type="button"
       className="testcase-list__action"
       disabled={selectedTestCases.length === 0}
+      onClick={ () => handleGetResult() }
+
     >
       Get Result
     </Button>

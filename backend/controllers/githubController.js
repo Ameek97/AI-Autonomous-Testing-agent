@@ -39,6 +39,7 @@ const githubCallback = async (req, res) => {
 
     const accessToken = result.data.access_token;
 
+    const userId = req.user.id;
     await pool.query(
       `UPDATE users
       SET github_access_token = $1
