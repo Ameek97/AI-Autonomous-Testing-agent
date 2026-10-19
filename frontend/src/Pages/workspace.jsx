@@ -3,7 +3,7 @@ import axios from "axios";
 import  WorkspaceHeader  from "../Components/workspace/WorkspaceHeader.jsx";
 import Workspacecard from "../Components/workspace/Workspacecard.jsx";
 import Repocard from "../Components/workspace/repocard.jsx";
-
+import NCRepoCard from "../Components/workspace/ncRepocard.jsx";
 function Workspace() {
 
 
@@ -60,8 +60,8 @@ function Workspace() {
 
     <h1 className="text-[2em] font-bold"> Repositories </h1> 
    
-    <Repocard repolist={repositories} />
-
+    {githubConnected ? (<Repocard repolist={repositories} />) : (<NCRepoCard/>) } 
+ 
     </div>) 
 
 

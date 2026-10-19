@@ -20,7 +20,7 @@ function Workspacecard( { githubConnected, onDisconnectGithub } ) {
     { !githubConnected ? (
        
       <button className="workspace-card__button" type="button" onClick={handleAddClick}>
-        + Add
+        +Connect
       </button>) : (
       <>
       <DialogBox />
