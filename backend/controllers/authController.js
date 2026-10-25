@@ -8,7 +8,7 @@ dotenv.config();
 
 
 // 1) The signup function 
-export const signup = async(req,res)=>{
+ const signup = async(req,res)=>{
 
       try{
 
@@ -54,7 +54,7 @@ export const signup = async(req,res)=>{
 
 
 // Login function
-export const login = async (req, res) => {
+ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -103,3 +103,6 @@ export const login = async (req, res) => {
     });
   }
 };
+
+
+module.exports = { signup, login };
