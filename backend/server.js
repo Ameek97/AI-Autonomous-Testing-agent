@@ -5,6 +5,7 @@ require("dotenv").config();
 const githubRoutes = require("./routes/githubRoutes");
 const repositoryRoutes = require("./routes/repositoryRoutes");
 const testcaseRoutes = require("./routes/testcaseRoutes");
+const authRoutes = require("./routes/authRoutes");
 const app = express();
 const PORT = process.env.PORT || 5001;
 
@@ -18,6 +19,7 @@ app.get("/", (req, res) => {
   res.json({ message: "Backend is running" });
 });
 
+app.use("/api/auth", authRoutes);
 app.use("/api/github", githubRoutes);
 app.use("/api/repositories", repositoryRoutes);
 app.use("/api/testcase/", testcaseRoutes);
