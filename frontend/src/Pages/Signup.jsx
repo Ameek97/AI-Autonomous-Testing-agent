@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../Context/authContext";
 import "./Signup.css";
+import axios from "axios";
 
 function SignupPage() {
     
@@ -29,8 +30,10 @@ function SignupPage() {
     setError("");
     setLoading(true);
 
+  
+
     try {
-       const res = await axios.post("api/auth/signup",{email, password});
+       const res = await axios.post("http://localhost:5001/api/auth/signup",{email: formData.email, password: formData.password,});
 
       setlogedin(true);
       
@@ -38,6 +41,7 @@ function SignupPage() {
 
 
     } catch (err) {
+      console.error(err);
       setError( err.response?.data?.message || "Signup failed");
     } finally {
       setLoading(false);

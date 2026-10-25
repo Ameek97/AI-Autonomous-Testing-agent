@@ -24,7 +24,7 @@ function Login() {
 
     try{
         
-     const res = await axios.post("api/auth/login",{email, password});
+     const res = await axios.post("api/auth/login", {email, password} );
 
 
      setlogedin(true);

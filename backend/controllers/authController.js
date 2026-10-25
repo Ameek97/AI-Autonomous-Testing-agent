@@ -14,6 +14,10 @@ dotenv.config();
 
         const {email, password} = req.body;
 
+        if (!email || !password) {
+          return res.status(400).json({ message: "Email and password are required" });
+        }
+
         const Res = await pool.query( " select * from users where email= $1",[email] );
 
 
@@ -33,6 +37,7 @@ dotenv.config();
  
         res.cookie("jwt",token, {httpOnly: true,
                                  maxAge: 10 * 24 * 60 * 60 * 1000,
+                                 sameSite: "lax",
                                  secure: process.env.NODE_ENV === "production",})
 
         return res
@@ -67,6 +72,10 @@ dotenv.config();
         message: "Invalid email or password",}); }
 
     const user = result.rows[0];
+
+    if (!password || !user.password) {
+      return res.status(401).json({
+        message: "Invalid email or password",}); }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
