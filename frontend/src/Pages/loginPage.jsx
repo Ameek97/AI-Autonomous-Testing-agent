@@ -1,7 +1,7 @@
 
 import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { AuthContext } from "./Context";
+import { AuthContext } from "../Context/authContext";
 import "./Login.css";
 
 function Login() {
@@ -48,14 +48,14 @@ function Login() {
       <div className="login-page">
       <div className="login-card">
 
-        /* login header */
+        {/* login header */}
         <div className="login-header">
           <h1>Welcome back</h1>
           <p>Sign in to continue to your workspace.</p>
         </div>
 
 
-        /* the form for login */
+        {/* the form for login */}
         <form onSubmit={handleLogin}>
 
           <div className="form-group">
