@@ -30,25 +30,15 @@ function SignupPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Signup failed");
-      }
+       const res = await axios.post("api/auth/signup",{email, password});
 
       setlogedin(true);
+      
       navigate("/workspace");
+
+
     } catch (err) {
-      setError(err.message || "Something went wrong");
+      setError( err.response?.data?.message || "Signup failed");
     } finally {
       setLoading(false);
     }

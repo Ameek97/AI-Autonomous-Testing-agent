@@ -3,47 +3,46 @@ import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../Context/authContext";
 import "./Login.css";
+import axios from "axios";
 
 function Login() {
   const navigate = useNavigate();
-  const { setlogedin } = useContext(AuthContext);
+  const { isloggedin, setlogedin } = useContext(AuthContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+
+  const [loading, setLoading] = useState(false);  {/* loading becomes true, until some response is recieved from backend */}
+  const [error, setError] = useState(""); {/* stores the error message recieved from the backend*/}
 
   async function handleLogin(e) {
+
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ email, password }),
-      });
 
-      const data = await res.json();
+    try{
+        
+     const res = await axios.post("api/auth/login",{email, password});
 
-      if (!res.ok) {
-        throw new Error(data.message || "Login failed");
-      }
 
-      setlogedin(true);
-      navigate("/workspace", { replace: true });
+     setlogedin(true);
+     navigate("/workspace", { replace: true });
+      
     } catch (err) {
-      setError(err.message || "Something went wrong");
+      setError( err.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
   }
 
+  if (isloggedin) {
+  return <Navigate to="/workspace" replace />; }
+
   return (
+
+  
     
       <div className="login-page">
       <div className="login-card">
@@ -68,7 +67,8 @@ function Login() {
             <input id="password" type="password" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} required/>
           </div>
 
-          {error && <p className="login-error">{error}</p>}
+        
+          {error && <p className="login-error"> {error} </p>} {/*if there is some error, display the error message*/}
 
           <button type="submit" disabled={loading}>
             {loading ? "Signing in..." : "Sign in"}
