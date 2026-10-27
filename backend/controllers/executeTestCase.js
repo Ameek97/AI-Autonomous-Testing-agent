@@ -12,8 +12,8 @@ const { chromium } = require("playwright-core");
 
 // provided a testcase, fetch its target files from github
 const fetchGithubFiles = async (testcase, githubToken) => {
+  
   const files = []; // store tqhe fetched files here
-
   const owner = testcase.repo_owner;   // these params are used to make api req to git
   const repoName = testcase.repo_name;
   const branch = testcase.branch || "main";
@@ -35,7 +35,7 @@ const fetchGithubFiles = async (testcase, githubToken) => {
       const data =  response.data;
 
       if (data.content) {
-        const content = Buffer.from(data.content, "base64").toString("utf-8");
+        const content = Buffer.from(data.content, "base64").toString("utf-8"); // the data we recieve from git is in base64 format, so we have to decode it to utf-8 
 
         files.push({
           path,
@@ -65,6 +65,7 @@ const {testCaseIds, target_domain, global_instruction} = req.body
     const result = await pool.query(
     "SELECT * FROM test_cases WHERE id = $1",
     [id] );
+
   if (result.rows.length > 0) {
     testcases.push(result.rows[0]);} }
 
@@ -79,7 +80,7 @@ const {testCaseIds, target_domain, global_instruction} = req.body
 );
 
 const githubToken = result.rows[0]?.github_access_token;
-    const testcaseFiles = [];
+const testcaseFiles = [];
 
       for (const testcase of testcases) {
         const files = await fetchGithubFiles(testcase, githubToken);  // fetch the files for this code
@@ -95,8 +96,7 @@ const githubToken = result.rows[0]?.github_access_token;
 
       for (const item of testcaseFiles) {
         const testcase = testcases.find(
-          (tc) => tc.id === item.testCaseId
-        );
+          (tc) => tc.id === item.testCaseId);
 
         if (!testcase) continue;
 
