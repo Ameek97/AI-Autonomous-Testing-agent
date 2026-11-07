@@ -60,14 +60,16 @@ const {testCaseIds, target_domain, global_instruction} = req.body
 
   const testcases = [];
 
-  // 1) fetch the testcases from the database 
-  for (const id of testCaseIds) {
-    const result = await pool.query(
-    "SELECT * FROM test_cases WHERE id = $1",
-    [id] );
 
-  if (result.rows.length > 0) {
-    testcases.push(result.rows[0]);} }
+
+        // 1) fetch the testcases from the database 
+        for (const id of testCaseIds) {
+            const result = await pool.query(
+            "SELECT * FROM test_cases WHERE id = $1",
+            [id] );
+
+        if (result.rows.length > 0) {
+          testcases.push(result.rows[0]);} }
 
 
 
@@ -80,7 +82,7 @@ const {testCaseIds, target_domain, global_instruction} = req.body
 );
 
 const githubToken = result.rows[0]?.github_access_token;
-const testcaseFiles = [];
+const testcaseFiles = []; // it will store the testcase id, along with the list of files
 
       for (const testcase of testcases) {
         const files = await fetchGithubFiles(testcase, githubToken);  // fetch the files for this code
@@ -130,18 +132,13 @@ const testcaseFiles = [];
 
 
 
-        const result = await ai.models.generateContent({
-          model: "gemini-3.8-flash",
-          contents: prompt,
-        });
+        const result = await ai.models.generateContent({ model: "gemini-3.8-flash",
+                                                         contents: prompt,}); 
 
         let script = result.text;
 
         if (!script) {
-          throw new Error(
-            `Gemini returned an empty script for test case ${testcase.id}`
-          );
-        }
+          throw new Error( `Gemini returned an empty script for test case ${testcase.id}` ); }
 
         // Remove Markdown code fences if Gemini includes them
         script = script
@@ -152,29 +149,30 @@ const testcaseFiles = [];
         generatedScripts.push({
           testCaseId: testcase.id,
           expectedResult: testcase.expected_result,
-          script,
-        });
+          script,});
       }
 
       console.log(generatedScripts);
 
-     
-const bb = new Browserbase({
-  apiKey: process.env.BROWSERBASE_API_KEY,
-});
+   // instance of browserbase that lets you create a session  
+   const bb = new Browserbase({ apiKey: process.env.BROWSERBASE_API_KEY, });
 
-let session;
-let browser;
-const results = [];
+   let session;
+   let browser;
+   const results = [];
 
 try {
+
+  // one session is one instanse of a browser, like one browser app 
   session = await bb.sessions.create({
     projectId: process.env.BROWSERBASE_PROJECT_ID,
   });
 
+  // connect playwright to the session
   browser = await chromium.connectOverCDP(
     session.connectUrl
   );
+
   const context = browser.contexts()[0];
   const page = context.pages()[0] || await context.newPage();
 
@@ -247,7 +245,7 @@ try {
       } catch (error) { console.error(error.message); }
 
 
-
+  // save the results in database 
   try {
     for (const result of results) {
       await pool.query(
@@ -259,12 +257,11 @@ try {
           result.status,
           JSON.stringify(result.logs),
           result.error || null,
-        ]
-      );
-    }
-  } catch (error) {
-    console.error(error.message);
-    throw new Error("Failed to save test results");
+        ] ); }
+
+    } catch (error) {
+      console.error(error.message);
+      throw new Error("Failed to save test results");
   }
 }
 
